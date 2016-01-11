@@ -110,8 +110,6 @@ module.exports = (function() {
   };
 
   var setParent = function(selector) {
-    if(src_el) this.destroy();
-
     if (typeof selector === 'object' && typeof selector.hasChildNodes === 'function')
       src_el = selector;
     else
