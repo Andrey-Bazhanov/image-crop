@@ -197,29 +197,17 @@ module.exports = (function() {
     if(opts.de) { opts.de(); }
   };
 
-  ImageCropper.prototype.crop = function(mime_type, quality, opts) {
+  ImageCropper.prototype.crop = function(mime_type, quality) {
     if(!mime_type || (mime_type !== 'image/jpeg' && mime_type !== 'image/png')) {mime_type = 'image/jpeg';}
     if(!quality || quality < 0 || quality > 1) {quality = 1;}
 
-    var scale = 1;
-    var scaleReal = opts.realW && opts.cropW ? (opts.realW / opts.cropW).toFixed(2) : 1;
-    scale = dim.w * scaleReal > opts.maxW ? opts.maxW/dim.w : scaleReal;
-
     var canvas = document.createElement('canvas');
-    canvas.setAttribute('width', dim.w * scale);
-    canvas.setAttribute('height', dim.h * scale);
-
+    canvas.setAttribute('width', dim.w);
+    canvas.setAttribute('height', dim.h);
     var ctx = canvas.getContext('2d');
-    ctx.drawImage(
-      img,
-      ratio.w * dim.x,
-      ratio.h * dim.y,
-      ratio.w * dim.w,
-      ratio.h * dim.h,
-      0,
-      0,
-      dim.w * scale,
-      dim.h * scale
+    ctx.drawImage(img,
+      ratio.w * dim.x, ratio.h * dim.y, ratio.w * dim.w, ratio.h * dim.h,
+      0, 0, dim.w, dim.h
     );
     return canvas.toDataURL(mime_type, quality);
   };
@@ -233,6 +221,7 @@ module.exports = (function() {
       var d = src_el.getBoundingClientRect();
       var x = e.clientX - d.left, y = e.clientY - d.top;
 
+      console.log(e.clientX, e)
       return {
         x : x < 0 ? 0 : (x > d.width ? d.width : x),
         y : y < 0 ? 0 : (y > d.height ? d.height : y)
@@ -276,7 +265,7 @@ module.exports = (function() {
       if(opts.up) { opts.up(dim); }
     };
 
-    var update = function update(e) {
+    function update(e) {
       e = convertGlobalToLocal(e);
       dim.x = e.x - dim.w*.5;
       dim.y = e.y - dim.h*.5;
