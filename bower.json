@@ -2,6 +2,7 @@
   "name": "peterver-img-crop",
   "version": "1.0.3",
   "authors": [
+    "Andrey Bazhanov",
     "Peter Vermeulen <contact@peterver.be>"
   ],
   "description": "Lightweight image cropper, with zero dependency requirements",
@@ -16,7 +17,7 @@
     "lightweight"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/peterver/image-crop",
+  "homepage": "https://github.com/Andrey-Bazhanov/image-crop",
   "ignore": [
     "node_modules",
     "example",
