@@ -49,7 +49,8 @@ var onFileChange = function(evt) {
 
   reader.onload = function (evt) {
     console.log(evt.target);
-    imageCropper = new ImageCropper('#test-image-cropper', evt.target.result, {
+    var testCroper = document.querySelector('#test-image-cropper');
+    imageCropper = new ImageCropper(testCroper, evt.target.result, {
       max_width: 618,
       max_height: 2000,
       min_crop_width: 40,
