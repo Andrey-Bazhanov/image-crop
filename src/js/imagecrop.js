@@ -205,7 +205,7 @@ module.exports = (function() {
     if(!quality || quality < 0 || quality > 1) {quality = 1;}
 
     var scale = 1;
-    var scaleReal = opts.realW && opts.cropW ? (opts.realW / opts.cropW).toFixed(2) : 1;
+    var scaleReal = img.naturalWidth && opts.cropW && img.naturalWidth > opts.cropW ? (img.naturalWidth / opts.cropW).toFixed(2) : 1;
     scale = dim.w * scaleReal > opts.maxW ? opts.maxW/dim.w : scaleReal;
 
     var canvas = document.createElement('canvas');
@@ -215,16 +215,32 @@ module.exports = (function() {
     var ctx = canvas.getContext('2d');
     ctx.drawImage(
       img,
-      ratio.w * dim.x,
-      ratio.h * dim.y,
-      ratio.w * dim.w,
-      ratio.h * dim.h,
+      (ratio.w * dim.x).toFixed(1),
+      (ratio.h * dim.y).toFixed(1),
+      (ratio.w * dim.w).toFixed(1),
+      (ratio.h * dim.h).toFixed(1),
       0,
       0,
-      dim.w * scale,
-      dim.h * scale
+      (dim.w * scale).toFixed(1),
+      (dim.h * scale).toFixed(1)
     );
-    return canvas.toDataURL(mime_type, quality);
+
+    var resultImage = canvas.toDataURL(mime_type, quality);
+    var head = 'data:'+mime_type+';base64,';
+    var imgFileSize = Math.round((resultImage.length - head.length)*3/4);
+    var fileSizeMb = imgFileSize / 1024 / 1024;
+    fileSizeMb = fileSizeMb.toFixed(2) > 0 ? fileSizeMb.toFixed(2)+'Mb' : fileSizeMb.toFixed(3)+'Mb';
+
+    return [
+      resultImage,
+      {
+        width: (dim.w * scale).toFixed(0),
+        height: (dim.h * scale).toFixed(0),
+        file_extension: mime_type.split('/')[1],
+        file_size: fileSizeMb,
+        file_size_in_bytes: imgFileSize
+      }
+    ]
   };
 
 //
@@ -267,6 +283,9 @@ module.exports = (function() {
       //  Set w/h for future use
       dim.w = dim.x2 - dim.x;
       dim.h = dim.y2 - dim.y;
+
+      dim.w = (dim.w > 0 ? dim.w : w)
+      dim.h = (dim.h > 0 ? dim.h : h)
 
       //  Draw
       handles_wrap.style.top = dim.y + 'px';
